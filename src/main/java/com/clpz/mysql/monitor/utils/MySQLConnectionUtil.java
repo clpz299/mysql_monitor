@@ -31,10 +31,8 @@ public class MySQLConnectionUtil {
 
     public static Connection getConn(String dbhost, int dbport, String dbuser, String dbpass) {
         Connection conn = null;
-        String JDBC_DRIVER = "com.mysql.jdbc.Driver";
+        String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
         String DB_URL = null;
-        // MySQL 8.0 以上版本 - JDBC 驱动名及数据库 URL
-        JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
         DB_URL = String.format("jdbc:mysql://%s:%s/mysql?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&tinyInt1isBit=false&useSSL=false&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai", dbhost, dbport);
         try {
             Class.forName(JDBC_DRIVER);

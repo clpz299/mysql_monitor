@@ -8,6 +8,7 @@ import com.clpz.mysql.monitor.utils.FileCustUtil;
 import com.clpz.mysql.monitor.utils.MySQLConnectionUtil;
 import org.springframework.core.io.ClassPathResource;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -66,20 +67,20 @@ public class SqlGeneralLogServer extends Thread {
         ClassPathResource classPathResource = new ClassPathResource("tempPath.txt");
         //    判断文件是否存在
         boolean exists = false;
-        String fileName = "tem.log";
+        String fileName = String.format("/" + "%s%s_%s", host, port, DateUtil.today());
         try {
-            exists = classPathResource.getFile().exists();
-            fileName = String.format("/" + "%s%s_%s", host, port, DateUtil.today());
-            if (exists) {
+            File pathFile = classPathResource.getFile();
+            if(pathFile != null){
                 logPath = FileUtil.readUtf8String(classPathResource.getFile()) + fileName;
             }
         } catch (IOException e) {
-            logPath = FileUtil.getParent(classPathResource.getPath(), 1) + fileName;
+            logPath = "." + fileName;
         }
     }
 
     @Override
     public void run() {
+        String constName = this.logPath;
         GlobalConstants.ADD_SERVER(this);
         connect();
         if (this.conn != null) {
@@ -99,7 +100,7 @@ public class SqlGeneralLogServer extends Thread {
                         String logres = rs.getString("argument");
                         if (!logres.equals(logSql)) {
                             if (rowIndex % 900 == 0) {
-                                this.logPath = this.logPath + rowIndex;
+                                this.logPath = constName + rowIndex;
                             }
                             if (!FileUtil.exist(this.logPath)) {
                                 FileUtil.touch(this.logPath);
